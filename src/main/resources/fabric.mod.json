@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "very-blue-world",
+	"version": "${version}",
+	"name": "Very Blue World",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/very-blue-world/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.mcmodknower.veryblueworld.VeryBlueWorld"
+		],
+		"client": [
+			"io.github.mcmodknower.veryblueworld.VeryBlueWorldClient"
+		]
+	},
+	"mixins": [
+		"very-blue-world.mixins.json",
+		{
+			"config": "very-blue-world.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
