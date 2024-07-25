@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,10 +22,12 @@ public abstract class ResourceLocationBlueClientMixin {
 
 		// Copy the data of the input stream so mc can get the original data
 		// when it is not an image
-		InputStream in = cir.getReturnValue();
-		ByteArrayOutputStream originalCopying = new ByteArrayOutputStream(in.available());
-		in.transferTo(originalCopying);
-		byte[] original = originalCopying.toByteArray();
+		byte[] original;
+		try(InputStream in = cir.getReturnValue()) {
+			ByteArrayOutputStream originalCopying = new ByteArrayOutputStream(in.available());
+			in.transferTo(originalCopying);
+			original = originalCopying.toByteArray();
+		}
 
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(original));
 
@@ -35,17 +38,23 @@ public abstract class ResourceLocationBlueClientMixin {
 			return;
 		}
 
-		// Paint it blue
+
+		// Copy to a well editable image
 		int height = image.getHeight();
 		int width = image.getWidth();
-		Graphics2D graphics = image.createGraphics();
-		graphics.setBackground(Color.BLUE);
-		graphics.clearRect(0,0,width,height);
+		BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics = outputImage.createGraphics();
+		graphics.drawRenderedImage(image, new AffineTransform());
+
+		// paint it blue, but keep the old alpha
+		graphics.setComposite(AlphaComposite.SrcAtop);
+		graphics.setColor(Color.BLUE);
+		graphics.fillRect(0, 0, width, height);
 		graphics.dispose();
 
 		// Wrap the result, so it can be return as an InputStream
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		ImageIO.write(image, "png", byteOut);
+		ImageIO.write(outputImage, "png", byteOut);
 		byte[] data = byteOut.toByteArray();
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 		cir.setReturnValue(inputStream);
