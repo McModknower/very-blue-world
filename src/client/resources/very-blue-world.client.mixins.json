@@ -3,7 +3,7 @@
 	"package": "io.github.mcmodknower.veryblueworld.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
+		"ResourceLocationBlueClientMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

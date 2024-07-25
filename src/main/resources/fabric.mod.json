@@ -3,9 +3,9 @@
 	"id": "very-blue-world",
 	"version": "${version}",
 	"name": "Very Blue World",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A mod wich turns your entire world very blue.",
 	"authors": [
-		"Me!"
+		"McModknower"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -13,17 +13,8 @@
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/very-blue-world/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"io.github.mcmodknower.veryblueworld.VeryBlueWorld"
-		],
-		"client": [
-			"io.github.mcmodknower.veryblueworld.VeryBlueWorldClient"
-		]
-	},
+	"environment": "client",
 	"mixins": [
-		"very-blue-world.mixins.json",
 		{
 			"config": "very-blue-world.client.mixins.json",
 			"environment": "client"
@@ -36,6 +27,6 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"very-blue-stair-mod": "*"
 	}
 }
