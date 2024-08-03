@@ -15,9 +15,9 @@ import java.util.Objects;
 public abstract class ResourceLocationBlueClientMixin {
 
 	@Unique
-	private static final int BLUE = NativeImage.packColor(0,0xFF, 0,0);
+	private static final int BLUE = 0xFF << 16;
 	@Unique
-	private static final int ALPHA_MASK = NativeImage.packColor(0xFF,0, 0,0);
+	private static final int ALPHA_MASK = 0xFF << 24;
 
 	@Inject(at = @At("RETURN"), method = "getInputStream()Ljava/io/InputStream;", cancellable = true)
 	private void getInputStream(CallbackInfoReturnable<InputStream> cir) throws IOException {
@@ -31,7 +31,7 @@ public abstract class ResourceLocationBlueClientMixin {
 			original = originalCopying.toByteArray();
 		}
 
-		try(NativeImage image = NativeImage.read(new ByteArrayInputStream(original));) {
+		try(NativeImage image = NativeImage.read(new ByteArrayInputStream(original))) {
 			int width = image.getWidth();
 			int height = image.getHeight();
 			for (int x = 0; x < width; x++) {

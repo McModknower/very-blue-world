@@ -1,7 +1,7 @@
 {
 	"required": true,
 	"package": "io.github.mcmodknower.veryblueworld.mixin.client",
-	"compatibilityLevel": "JAVA_21",
+	"compatibilityLevel": "JAVA_8",
 	"client": [
 		"ResourceLocationBlueClientMixin"
 	],
