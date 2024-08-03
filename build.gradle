@@ -20,12 +20,12 @@ repositories {
 }
 
 loom {
-	splitEnvironmentSourceSets()
+	//splitEnvironmentSourceSets()
 
 	mods {
 		"very-blue-world" {
 			sourceSet sourceSets.main
-			sourceSet sourceSets.client
+			//sourceSet sourceSets.client
 		}
 	}
 
@@ -48,7 +48,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 8
 }
 
 java {

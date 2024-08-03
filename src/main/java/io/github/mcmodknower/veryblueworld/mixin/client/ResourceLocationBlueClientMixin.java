@@ -27,39 +27,10 @@ public abstract class ResourceLocationBlueClientMixin {
 		byte[] original;
 		try(InputStream in = cir.getReturnValue()) {
 			ByteArrayOutputStream originalCopying = new ByteArrayOutputStream(in.available());
-			in.transferTo(originalCopying);
+			transferTo(in,originalCopying);
 			original = originalCopying.toByteArray();
 		}
 
-		BufferedImage image = ImageIO.read(new ByteArrayInputStream(original));
-
-		// if the input stream is not of a known image type,
-		// ImageIO#read returns null
-		if(image == null) {
-			cir.setReturnValue(new ByteArrayInputStream(original));
-			return;
-		}
-
-
-		// Copy to a well editable image
-		int height = image.getHeight();
-		int width = image.getWidth();
-		BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D graphics = outputImage.createGraphics();
-		graphics.drawRenderedImage(image, new AffineTransform());
-
-		// paint it blue, but keep the old alpha
-		graphics.setComposite(AlphaComposite.SrcAtop);
-		graphics.setColor(Color.BLUE);
-		graphics.fillRect(0, 0, width, height);
-		graphics.dispose();
-
-		// Wrap the result, so it can be return as an InputStream
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		ImageIO.write(outputImage, "png", byteOut);
-		byte[] data = byteOut.toByteArray();
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-		cir.setReturnValue(inputStream);
 		try(NativeImage image = NativeImage.read(new ByteArrayInputStream(original));) {
 			int width = image.getWidth();
 			int height = image.getHeight();
@@ -76,4 +47,18 @@ public abstract class ResourceLocationBlueClientMixin {
 			cir.setReturnValue(new ByteArrayInputStream(original));
 		}
 	}
+
+	@Unique
+	private static final int DEFAULT_BUFFER_SIZE = 16384;
+
+	@Unique
+	private static void transferTo(InputStream in, OutputStream out) throws IOException {
+		Objects.requireNonNull(out, "out");
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		int read;
+		while ((read = in.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
+			out.write(buffer, 0, read);
+        }
+	}
+
 }
