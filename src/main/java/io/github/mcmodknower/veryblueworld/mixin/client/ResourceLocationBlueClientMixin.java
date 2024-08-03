@@ -1,7 +1,7 @@
 package io.github.mcmodknower.veryblueworld.mixin.client;
 
 import net.minecraft.client.texture.NativeImage;
-import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.io.*;
 import java.util.Objects;
 
-@Mixin(Resource.class)
+@Mixin(ResourceImpl.class)
 public abstract class ResourceLocationBlueClientMixin {
 
 	@Unique
@@ -36,8 +36,8 @@ public abstract class ResourceLocationBlueClientMixin {
 			int height = image.getHeight();
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
-					int color = image.getColor(x,y);
-					image.setColor(x,y,(color & ALPHA_MASK) | BLUE);
+					int color = image.getPixelRgba(x,y);
+					image.setPixelRgba(x,y,(color & ALPHA_MASK) | BLUE);
 				}
 			}
 			byte[] newImage = image.getBytes();
