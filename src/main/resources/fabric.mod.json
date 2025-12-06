@@ -11,7 +11,7 @@
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "CC0-1.0",
+	"license": "WTFPL",
 	"icon": "assets/very-blue-world/icon.png",
 	"environment": "client",
 	"mixins": [
@@ -22,8 +22,8 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.15.11",
-		"minecraft": ">=1.19",
-		"java": ">=8"
+		"minecraft": ">=1.21.2",
+		"java": ">=21"
 	},
 	"suggests": {
 		"very-blue-stair-mod": "*"

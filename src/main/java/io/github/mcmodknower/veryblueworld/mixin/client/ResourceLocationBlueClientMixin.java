@@ -9,13 +9,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.*;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
 
 @Mixin(Resource.class)
 public abstract class ResourceLocationBlueClientMixin {
 
 	@Unique
-	private static final int BLUE = 0xFF << 16;
+	private static final int BLUE = 0xFF;
 	@Unique
 	private static final int ALPHA_MASK = 0xFF << 24;
 
@@ -27,7 +30,7 @@ public abstract class ResourceLocationBlueClientMixin {
 		byte[] original;
 		try(InputStream in = cir.getReturnValue()) {
 			ByteArrayOutputStream originalCopying = new ByteArrayOutputStream(in.available());
-			transferTo(in,originalCopying);
+            in.transferTo(originalCopying);
 			original = originalCopying.toByteArray();
 		}
 
@@ -36,29 +39,19 @@ public abstract class ResourceLocationBlueClientMixin {
 			int height = image.getHeight();
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
-					int color = image.getColor(x,y);
-					image.setColor(x,y,(color & ALPHA_MASK) | BLUE);
+					int color = image.getColorArgb(x,y);
+					image.setColorArgb(x,y,(color & ALPHA_MASK) | BLUE);
 				}
 			}
-			byte[] newImage = image.getBytes();
-			ByteArrayInputStream inputStream = new ByteArrayInputStream(newImage);
-			cir.setReturnValue(inputStream);
+
+            //ASSUMPTION: java will clean these files up fast enough
+            Path tmpFile = Files.createTempFile("very-blue-world", null);
+            System.out.println(tmpFile);
+            image.writeTo(tmpFile);
+            cir.setReturnValue(Files.newInputStream(tmpFile, StandardOpenOption.DELETE_ON_CLOSE));
 		} catch (IOException e) {
 			cir.setReturnValue(new ByteArrayInputStream(original));
 		}
-	}
-
-	@Unique
-	private static final int DEFAULT_BUFFER_SIZE = 16384;
-
-	@Unique
-	private static void transferTo(InputStream in, OutputStream out) throws IOException {
-		Objects.requireNonNull(out, "out");
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-		int read;
-		while ((read = in.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
-			out.write(buffer, 0, read);
-        }
 	}
 
 }
