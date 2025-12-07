@@ -46,7 +46,6 @@ public abstract class ResourceLocationBlueClientMixin {
 
             //ASSUMPTION: java will clean these files up fast enough
             Path tmpFile = Files.createTempFile("very-blue-world", null);
-            System.out.println(tmpFile);
             image.writeTo(tmpFile);
             cir.setReturnValue(Files.newInputStream(tmpFile, StandardOpenOption.DELETE_ON_CLOSE));
 		} catch (IOException e) {
